@@ -2,14 +2,41 @@
 # frozen_string_literal: true
 
 require_relative '../lib/interactive-seed-cli/arrow_menu.rb'
+require_relative '../lib/interactive-seed-cli/titles.rb'
+require_relative '../lib/interactive-seed-cli/borders.rb'
 
-test_options_hash = {
-    "Example 1" => proc { puts "This is an Example Arrow Option" },
-    "Example 2" => proc { puts "This is an Example Arrow Option (2)" },
-    "Example 3" => proc { puts "This is an Example Arrow Option (3)" }, 
-    "Quit" => proc { puts "Exiting" }
-}
 
-example_menu = ArrowMenu.new("Test Menu" , test_options_hash)
+class ExampleProgram
+    attr_reader :main_menu
+    attr_reader :submenu_example
 
-puts example_menu.render_menu
+    def initialize
+        @main_menu = ArrowMenu.new("Test Menu" , main_menu_options)
+        @submenu_example = ArrowMenu.new("Sub Menu!", sub_menu_options)
+    end
+
+    def main_menu_options
+        {
+            "Go to Sub-Menu" => proc { @submenu_example.render_menu  },
+            "Print Borders" => proc { Borders.print_all },
+            "Print Titles" => proc { puts "This is an Example Arrow Option (2)" },
+            "Example 3" => proc { puts "This is an Example Arrow Option (3)" },
+            "Quit" => proc { puts "Exiting" }
+        }
+    end
+
+    def sub_menu_options
+      {
+        "New Option" => proc { puts "This is another Menu Option of a sub-menu!"},
+        "Back" => proc { @main_menu.render_menu },
+        "Quit" => proc { puts "Exiting" }
+        }
+    end
+
+    def self.run
+        program = ExampleProgram.new
+        program.main_menu.render_menu
+    end
+end
+
+ExampleProgram.run
